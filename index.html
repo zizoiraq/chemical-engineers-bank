@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بنك المعلومات الهندسي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0f2b5b;
+    --accent: #f0a500;
+    --accent2: #00c9a7;
+    --danger: #e84545;
+    --success: #2ecc71;
+    --bg: #07162b;
+    --card: #0d2240;
+    --card2: #112952;
+    --text: #e8f0fe;
+    --muted: #7a94be;
+    --border: #1e3f6e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== BACKGROUND ===== */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(0,201,167,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(240,165,0,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 0%, rgba(15,43,91,0.5) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  /* ===== HEADER ===== */
+  .site-header {
+    text-align: center;
+    padding: 36px 0 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+
+  .site-header .logo {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+
+  .site-header .sub {
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  .site-header .university {
+    font-size: 0.85rem;
+    color: var(--accent2);
+    margin-top: 6px;
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.4s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== SCREEN TITLE ===== */
+  .screen-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .screen-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  /* ===== SUBJECTS GRID ===== */
+  .subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .subject-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 18px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .subject-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(240,165,0,0.05) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .subject-card:hover::before { opacity: 1; }
+  .subject-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+  }
+
+  .subject-card.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .subject-card.disabled:hover {
+    transform: none;
+    border-color: var(--border);
+    box-shadow: none;
+  }
+
+  .subject-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    width: 48px;
+    text-align: center;
+  }
+
+  .subject-info { flex: 1; }
+  .subject-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .subject-en {
+    font-size: 0.78rem;
+    color: var(--accent2);
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  .subject-badge {
+    font-size: 0.7rem;
+    background: rgba(240,165,0,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(240,165,0,0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+    flex-shrink: 0;
+  }
+
+  .coming-badge {
+    font-size: 0.7rem;
+    background: rgba(122,148,190,0.1);
+    color: var(--muted);
+    border: 1px solid rgba(122,148,190,0.2);
+    border-radius: 20px;
+    padding: 3px 10px;
+    flex-shrink: 0;
+  }
+
+  /* ===== LEVEL SCREEN ===== */
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: color 0.2s;
+    font-family: 'Tajawal', sans-serif;
+  }
+  .back-btn:hover { color: var(--accent); }
+
+  .subject-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 28px;
+  }
+
+  .subject-header .big-icon { font-size: 2.5rem; }
+  .subject-header h2 { font-size: 1.3rem; font-weight: 700; }
+  .subject-header p { font-size: 0.85rem; color: var(--accent2); font-family: 'Tajawal', sans-serif; }
+
+  .levels-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .level-card {
+    border-radius: 18px;
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .level-card.easy {
+    background: linear-gradient(145deg, #0a3020, #0d4028);
+    border-color: #1a7a4a;
+  }
+  .level-card.medium {
+    background: linear-gradient(145deg, #2a1d00, #3a2800);
+    border-color: #7a5500;
+  }
+  .level-card.hard {
+    background: linear-gradient(145deg, #2a0a0a, #3a0f0f);
+    border-color: #7a1a1a;
+  }
+
+  .level-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
+  .level-card.easy:hover  { border-color: var(--success); }
+  .level-card.medium:hover { border-color: var(--accent); }
+  .level-card.hard:hover  { border-color: var(--danger); }
+
+  .level-emoji { font-size: 2.4rem; margin-bottom: 12px; }
+  .level-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .level-en { font-size: 0.78rem; font-family: 'Tajawal', sans-serif; margin-bottom: 10px; }
+  .level-count { font-size: 0.8rem; opacity: 0.7; font-family: 'Tajawal', sans-serif; }
+
+  .level-card.easy  .level-name { color: #5dde96; }
+  .level-card.medium .level-name { color: #ffc840; }
+  .level-card.hard  .level-name { color: #ff7070; }
+
+  /* ===== QUIZ SCREEN ===== */
+  .quiz-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .quiz-info {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  .quiz-score {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(240,165,0,0.1);
+    border: 1px solid rgba(240,165,0,0.2);
+    border-radius: 20px;
+    padding: 4px 14px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--card);
+    border-radius: 3px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+    margin-bottom: 20px;
+  }
+
+  .question-num {
+    font-size: 0.78rem;
+    color: var(--accent2);
+    font-family: 'Tajawal', sans-serif;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .question-text {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    text-align: right;
+    cursor: pointer;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent2);
+    background: rgba(0,201,167,0.06);
+    transform: translateX(-3px);
+  }
+
+  .option-btn:disabled { cursor: not-allowed; }
+
+  .option-btn.correct {
+    border-color: var(--success);
+    background: rgba(46,204,113,0.12);
+    color: #a8ffcb;
+  }
+
+  .option-btn.wrong {
+    border-color: var(--danger);
+    background: rgba(232,69,69,0.12);
+    color: #ffaaaa;
+  }
+
+  .opt-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--card2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.2s;
+  }
+
+  .option-btn.correct .opt-letter { background: rgba(46,204,113,0.3); color: #5dde96; }
+  .option-btn.wrong   .opt-letter { background: rgba(232,69,69,0.3); color: #ff7070; }
+
+  .explanation-box {
+    display: none;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-right: 3px solid var(--accent2);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-top: 16px;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #b8d4f8;
+    font-family: 'Tajawal', sans-serif;
+    animation: fadeIn 0.3s ease;
+  }
+  .explanation-box.show { display: block; }
+
+  .next-btn {
+    display: none;
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent2), #00a589);
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.3px;
+  }
+  .next-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+  .next-btn.show { display: block; animation: fadeIn 0.3s ease; }
+
+  /* ===== RESULT SCREEN ===== */
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px 28px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .result-emoji { font-size: 4rem; margin-bottom: 16px; }
+  .result-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
+  .result-sub {
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-family: 'Tajawal', sans-serif;
+    margin-bottom: 28px;
+  }
+
+  .result-score-big {
+    font-size: 4.5rem;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .result-score-label {
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-family: 'Tajawal', sans-serif;
+    margin-bottom: 24px;
+  }
+
+  .result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .stat-box {
+    background: var(--card2);
+    border-radius: 14px;
+    padding: 14px 22px;
+    min-width: 100px;
+    border: 1px solid var(--border);
+  }
+  .stat-num { font-size: 1.8rem; font-weight: 900; }
+  .stat-lbl { font-size: 0.75rem; color: var(--muted); font-family: 'Tajawal', sans-serif; }
+  .stat-box.correct { border-color: rgba(46,204,113,0.3); }
+  .stat-box.correct .stat-num { color: var(--success); }
+  .stat-box.wrong   { border-color: rgba(232,69,69,0.3); }
+  .stat-box.wrong   .stat-num { color: var(--danger); }
+
+  .home-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .home-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(240,165,0,0.05);
+  }
+
+  /* ===== COMING SOON MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.show { display: flex; }
+
+  .modal-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 28px;
+    text-align: center;
+    max-width: 360px;
+    width: 90%;
+    animation: fadeIn 0.3s ease;
+  }
+  .modal-box .big { font-size: 3rem; margin-bottom: 12px; }
+  .modal-box h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+  .modal-box p { font-size: 0.9rem; color: var(--muted); font-family: 'Tajawal', sans-serif; margin-bottom: 24px; }
+
+  .modal-close {
+    padding: 12px 32px;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ===== FOOTER ===== */
+  .site-footer {
+    text-align: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .levels-grid { grid-template-columns: 1fr; }
+    .subjects-grid { grid-template-columns: 1fr; }
+    .result-stats { gap: 12px; }
+    .question-text { font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="logo">🎓 بنك المعلومات الهندسي</div>
+    <div class="sub">الجامعة التقنية الشمالية — الكلية التقنية الهندسية</div>
+    <div class="university">هندسة تقنيات الصناعات الكيمياوية والنفطية | تصميم: عزام عصام</div>
+  </header>
+
+  <!-- ============ SCREEN 1: SUBJECTS ============ -->
+  <div id="screen-subjects" class="screen active">
+    <div class="screen-title">اختر المادة</div>
+    <div class="screen-desc">اختر المادة التي تريد الاختبار فيها لتبدأ رحلة التعلم</div>
+
+    <div class="subjects-grid" id="subjects-grid">
+
+      <!-- 1. Heat Transfer - ACTIVE -->
+      <div class="subject-card" onclick="selectSubject('heat_transfer')">
+        <div class="subject-icon">🔥</div>
+        <div class="subject-info">
+          <div class="subject-name">الانتقال الحراري</div>
+          <div class="subject-en">Heat Transfer</div>
+        </div>
+        <div class="subject-badge">متاح</div>
+      </div>
+
+      <!-- 2-15: Coming Soon -->
+      <div class="subject-card disabled" onclick="showComing('انتقال الكتلة')">
+        <div class="subject-icon">💧</div>
+        <div class="subject-info">
+          <div class="subject-name">انتقال الكتلة</div>
+          <div class="subject-en">Mass Transfer</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('ميكانيك الموائع')">
+        <div class="subject-icon">🌊</div>
+        <div class="subject-info">
+          <div class="subject-name">ميكانيك الموائع</div>
+          <div class="subject-en">Fluid Mechanics</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('الثرموداينمك')">
+        <div class="subject-icon">⚡</div>
+        <div class="subject-info">
+          <div class="subject-name">الثرموداينمك</div>
+          <div class="subject-en">Thermodynamics</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('الحركية الكيميائية')">
+        <div class="subject-icon">⚗️</div>
+        <div class="subject-info">
+          <div class="subject-name">الحركية الكيميائية</div>
+          <div class="subject-en">Chemical Kinetics</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('المفاعلات الكيميائية')">
+        <div class="subject-icon">🧪</div>
+        <div class="subject-info">
+          <div class="subject-name">مفاعلات كيميائية</div>
+          <div class="subject-en">Chemical Reactors</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('الكيمياء العضوية')">
+        <div class="subject-icon">🧬</div>
+        <div class="subject-info">
+          <div class="subject-name">الكيمياء العضوية</div>
+          <div class="subject-en">Organic Chemistry</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('الكيمياء الفيزيائية')">
+        <div class="subject-icon">🔬</div>
+        <div class="subject-info">
+          <div class="subject-name">الكيمياء الفيزيائية</div>
+          <div class="subject-en">Physical Chemistry</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('الكيمياء التحليلية')">
+        <div class="subject-icon">📊</div>
+        <div class="subject-info">
+          <div class="subject-name">الكيمياء التحليلية</div>
+          <div class="subject-en">Analytical Chemistry</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('كيمياء النفط')">
+        <div class="subject-icon">🛢️</div>
+        <div class="subject-info">
+          <div class="subject-name">كيمياء النفط والبتروكيمياويات</div>
+          <div class="subject-en">Petroleum & Petrochemical Chemistry</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('عمليات الفصل')">
+        <div class="subject-icon">🔀</div>
+        <div class="subject-info">
+          <div class="subject-name">عمليات الفصل</div>
+          <div class="subject-en">Separation Processes</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('هندسة العمليات')">
+        <div class="subject-icon">🏭</div>
+        <div class="subject-info">
+          <div class="subject-name">هندسة العمليات الكيميائية</div>
+          <div class="subject-en">Chemical Process Engineering</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('السلامة الهندسية')">
+        <div class="subject-icon">🦺</div>
+        <div class="subject-info">
+          <div class="subject-name">السلامة والبيئة</div>
+          <div class="subject-en">Safety & Environmental Engineering</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('التآكل وحماية المواد')">
+        <div class="subject-icon">🔩</div>
+        <div class="subject-info">
+          <div class="subject-name">التآكل وحماية المواد</div>
+          <div class="subject-en">Corrosion & Materials Protection</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+      <div class="subject-card disabled" onclick="showComing('السيطرة والتحكم')">
+        <div class="subject-icon">🎛️</div>
+        <div class="subject-info">
+          <div class="subject-name">السيطرة والتحكم بالعمليات</div>
+          <div class="subject-en">Process Control</div>
+        </div>
+        <div class="coming-badge">قريباً</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 2: LEVEL ============ -->
+  <div id="screen-level" class="screen">
+    <div class="back-btn" onclick="goToSubjects()">← العودة للمواد</div>
+
+    <div class="subject-header">
+      <div class="big-icon" id="level-icon"></div>
+      <div>
+        <h2 id="level-subject-name"></h2>
+        <p id="level-subject-en"></p>
+      </div>
+    </div>
+
+    <div class="screen-title">اختر المستوى</div>
+    <div class="screen-desc">كل مستوى يحتوي على 30 سؤال من النوع المناسب</div>
+
+    <div class="levels-grid">
+      <div class="level-card easy" onclick="startQuiz('easy')">
+        <div class="level-emoji">🟢</div>
+        <div class="level-name">سهل</div>
+        <div class="level-en">Easy</div>
+        <div class="level-count">30 سؤال — تعريفات وأساسيات</div>
+      </div>
+      <div class="level-card medium" onclick="startQuiz('medium')">
+        <div class="level-emoji">🟡</div>
+        <div class="level-name">متوسط</div>
+        <div class="level-en">Medium</div>
+        <div class="level-count">30 سؤال — لماذا وكيف</div>
+      </div>
+      <div class="level-card hard" onclick="startQuiz('hard')">
+        <div class="level-emoji">🔴</div>
+        <div class="level-name">صعب</div>
+        <div class="level-en">Hard</div>
+        <div class="level-count">30 سؤال — تحليل ومقارنة</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 3: QUIZ ============ -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-topbar">
+      <div class="quiz-info" id="quiz-info"></div>
+      <div class="quiz-score" id="quiz-score">النقاط: 0</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div class="question-card">
+      <div class="question-num" id="question-num"></div>
+      <div class="question-text" id="question-text"></div>
+    </div>
+
+    <div class="options-list" id="options-list"></div>
+
+    <div class="explanation-box" id="explanation-box"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">السؤال التالي ←</button>
+  </div>
+
+  <!-- ============ SCREEN 4: RESULT ============ -->
+  <div id="screen-result" class="screen">
+    <div class="result-card">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <div class="result-score-big" id="result-score-big"></div>
+      <div class="result-score-label" id="result-score-label"></div>
+      <div class="result-stats">
+        <div class="stat-box correct">
+          <div class="stat-num" id="stat-correct"></div>
+          <div class="stat-lbl">إجابة صحيحة ✅</div>
+        </div>
+        <div class="stat-box wrong">
+          <div class="stat-num" id="stat-wrong"></div>
+          <div class="stat-lbl">إجابة خاطئة ❌</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="stat-total"></div>
+          <div class="stat-lbl">إجمالي الأسئلة</div>
+        </div>
+      </div>
+    </div>
+    <button class="home-btn" onclick="goToSubjects()">🏠 العودة إلى قائمة المواد</button>
+  </div>
+
+  <footer class="site-footer">
+    تصميم: عزام عصام | الجامعة التقنية الشمالية — هندسة تقنيات الصناعات الكيمياوية والنفطية
+  </footer>
+</div>
+
+<!-- COMING SOON MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="big">🚧</div>
+    <h3>قريباً</h3>
+    <p id="modal-text"></p>
+    <button class="modal-close" onclick="closeModal()">حسناً</button>
+  </div>
+</div>
+
+<!-- DATA FILES -->
+<script src="data/heat_transfer.js"></script>
+
+<script>
+// ====== SUBJECT DATA MAP ======
+const SUBJECTS = {
+  heat_transfer: {
+    name: 'الانتقال الحراري',
+    en: 'Heat Transfer',
+    icon: '🔥',
+    data: () => HEAT_TRANSFER_QUESTIONS
+  }
+};
+
+// ====== STATE ======
+let currentSubject = null;
+let currentLevel   = null;
+let questions      = [];
+let currentIndex   = 0;
+let score          = 0;
+let correctCount   = 0;
+let wrongCount     = 0;
+let answered       = false;
+
+// ====== HELPERS ======
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ====== NAVIGATION ======
+function goToSubjects() {
+  showScreen('screen-subjects');
+}
+
+function selectSubject(key) {
+  currentSubject = key;
+  const s = SUBJECTS[key];
+  document.getElementById('level-icon').textContent = s.icon;
+  document.getElementById('level-subject-name').textContent = s.name;
+  document.getElementById('level-subject-en').textContent = s.en;
+  showScreen('screen-level');
+}
+
+function startQuiz(level) {
+  currentLevel = level;
+  const raw = SUBJECTS[currentSubject].data()[level];
+
+  // Build questions with shuffled options
+  questions = shuffle(raw).map(q => {
+    const opts = shuffle([
+      { text: q.a, correct: true },
+      ...q.wrong.map(w => ({ text: w, correct: false }))
+    ]);
+    return { q: q.q, opts, explanation: q.a };
+  });
+
+  currentIndex = 0;
+  score        = 0;
+  correctCount = 0;
+  wrongCount   = 0;
+
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+// ====== QUIZ LOGIC ======
+function renderQuestion() {
+  const total = questions.length;
+  const cur   = questions[currentIndex];
+  const letters = ['أ', 'ب', 'ج', 'د'];
+  const levelName = { easy: 'سهل 🟢', medium: 'متوسط 🟡', hard: 'صعب 🔴' }[currentLevel];
+
+  // Progress
+  document.getElementById('progress-fill').style.width = `${(currentIndex / total) * 100}%`;
+  document.getElementById('quiz-info').textContent =
+    `${SUBJECTS[currentSubject].name} | ${levelName}`;
+  document.getElementById('quiz-score').textContent = `النقاط: ${score}`;
+  document.getElementById('question-num').textContent = `سؤال ${currentIndex + 1} من ${total}`;
+  document.getElementById('question-text').textContent = cur.q;
+
+  // Options
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  cur.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt.text}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    list.appendChild(btn);
+  });
+
+  // Reset state
+  answered = false;
+  document.getElementById('explanation-box').className = 'explanation-box';
+  document.getElementById('explanation-box').textContent = '';
+  document.getElementById('next-btn').className = 'next-btn';
+  document.getElementById('next-btn').textContent =
+    currentIndex === total - 1 ? 'عرض النتيجة 🏆' : 'السؤال التالي ←';
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+
+  const cur  = questions[currentIndex];
+  const btns = document.querySelectorAll('.option-btn');
+
+  btns.forEach(b => b.disabled = true);
+
+  if (cur.opts[idx].correct) {
+    btns[idx].classList.add('correct');
+    score++;
+    correctCount++;
+  } else {
+    btns[idx].classList.add('wrong');
+    wrongCount++;
+    // Show correct
+    cur.opts.forEach((o, i) => { if (o.correct) btns[i].classList.add('correct'); });
+  }
+
+  // Explanation
+  const exp = document.getElementById('explanation-box');
+  exp.textContent = '💡 ' + cur.explanation;
+  exp.className = 'explanation-box show';
+
+  document.getElementById('next-btn').className = 'next-btn show';
+  document.getElementById('quiz-score').textContent = `النقاط: ${score}`;
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+// ====== RESULT ======
+function showResult() {
+  const total = questions.length;
+  const pct   = Math.round((score / total) * 100);
+
+  let emoji, title, sub;
+  if (pct >= 90) { emoji = '🏆'; title = 'ممتاز جداً!'; sub = 'أداء رائع، أنت متمكن من هذا المستوى'; }
+  else if (pct >= 75) { emoji = '🥈'; title = 'جيد جداً!'; sub = 'نتيجة ممتازة، استمر في التعلم'; }
+  else if (pct >= 60) { emoji = '👍'; title = 'جيد'; sub = 'يمكنك تحسين نتيجتك بمراجعة الأسئلة الخاطئة'; }
+  else if (pct >= 40) { emoji = '📖'; title = 'بحاجة لمراجعة'; sub = 'راجع المادة وأعد المحاولة'; }
+  else { emoji = '💪'; title = 'لا تستسلم!'; sub = 'المحاولة المستمرة هي طريق النجاح'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = sub;
+  document.getElementById('result-score-big').textContent = pct + '%';
+  document.getElementById('result-score-label').textContent = `${score} من ${total} إجابة صحيحة`;
+  document.getElementById('stat-correct').textContent = correctCount;
+  document.getElementById('stat-wrong').textContent = wrongCount;
+  document.getElementById('stat-total').textContent = total;
+
+  document.getElementById('progress-fill').style.width = '100%';
+  showScreen('screen-result');
+}
+
+// ====== MODAL ======
+function showComing(name) {
+  document.getElementById('modal-text').textContent =
+    `مادة "${name}" ستكون متاحة قريباً، تابعنا للحصول على التحديثات!`;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay') || !e.target) {
+    document.getElementById('modal-overlay').classList.remove('show');
+  }
+}
+</script>
+
+</body>
+</html>
