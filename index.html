@@ -6,7 +6,8 @@
 <title>بنك المعلومات الهندسي</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
+  /* ===== متغيرات الوضع الداكن (افتراضي) ===== */
+  :root[data-theme="dark"] {
     --primary: #0f2b5b;
     --accent: #f0a500;
     --accent2: #00c9a7;
@@ -18,6 +19,33 @@
     --text: #e8f0fe;
     --muted: #7a94be;
     --border: #1e3f6e;
+    --header-bg: #07162b;
+    --footer-border: #1e3f6e;
+    --search-btn-bg: #1e3f6e;
+    --search-btn-color: #e8f0fe;
+    --search-btn-border: #7a94be;
+    --search-btn-hover-bg: #2a4a7a;
+  }
+
+  /* ===== متغيرات الوضع الفاتح ===== */
+  :root[data-theme="light"] {
+    --primary: #1e3a8a;
+    --accent: #f59e0b;
+    --accent2: #059669;
+    --danger: #dc2626;
+    --success: #10b981;
+    --bg: #f3f4f6;
+    --card: #ffffff;
+    --card2: #f9fafb;
+    --text: #111827;
+    --muted: #4b5563;
+    --border: #d1d5db;
+    --header-bg: #ffffff;
+    --footer-border: #e5e7eb;
+    --search-btn-bg: #f3f4f6;
+    --search-btn-color: #1f2937;
+    --search-btn-border: #9ca3af;
+    --search-btn-hover-bg: #e5e7eb;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,6 +56,7 @@
     color: var(--text);
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   /* ===== BACKGROUND ===== */
@@ -41,6 +70,11 @@
       radial-gradient(ellipse at 50% 0%, rgba(15,43,91,0.5) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
+    opacity: var(--bg-pattern-opacity, 0.5);
+  }
+  
+  :root[data-theme="light"] body::before {
+    --bg-pattern-opacity: 0.15;
   }
 
   .container {
@@ -57,6 +91,8 @@
     padding: 36px 0 28px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 32px;
+    background: var(--header-bg);
+    transition: background-color 0.3s ease;
   }
 
   .site-header .logo {
@@ -78,6 +114,38 @@
     color: var(--accent2);
     margin-top: 6px;
     font-family: 'Tajawal', sans-serif;
+  }
+
+  /* ===== زر تبديل الوضع ===== */
+  .theme-toggle {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+  }
+  
+  .theme-toggle button {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+  }
+  
+  .theme-toggle button:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  
+  .theme-toggle button span {
+    font-size: 1.1rem;
   }
 
   /* ===== SCREENS ===== */
@@ -365,13 +433,13 @@
   .option-btn.correct {
     border-color: var(--success);
     background: rgba(46,204,113,0.12);
-    color: #a8ffcb;
+    color: var(--text);
   }
 
   .option-btn.wrong {
     border-color: var(--danger);
     background: rgba(232,69,69,0.12);
-    color: #ffaaaa;
+    color: var(--text);
   }
 
   .opt-letter {
@@ -403,11 +471,50 @@
     margin-top: 16px;
     font-size: 0.9rem;
     line-height: 1.7;
-    color: #b8d4f8;
+    color: var(--text);
     font-family: 'Tajawal', sans-serif;
     animation: fadeIn 0.3s ease;
   }
   .explanation-box.show { display: block; }
+
+  /* ===== زر بحث جوجل ===== */
+  .google-search-container {
+    display: none;
+    margin-top: 12px;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .google-search-container.show {
+    display: block;
+  }
+  
+  .google-search-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--search-btn-border);
+    background: var(--search-btn-bg);
+    color: var(--search-btn-color);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .google-search-btn:hover {
+    background: var(--search-btn-hover-bg);
+    transform: translateY(-2px);
+    border-color: var(--accent2);
+  }
+  
+  .google-search-btn span {
+    font-size: 1.2rem;
+  }
 
   .next-btn {
     display: none;
@@ -545,7 +652,7 @@
   .site-footer {
     text-align: center;
     padding-top: 32px;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--footer-border);
     margin-top: 40px;
     font-size: 0.8rem;
     color: var(--muted);
@@ -558,12 +665,30 @@
     .subjects-grid { grid-template-columns: 1fr; }
     .result-stats { gap: 12px; }
     .question-text { font-size: 1.05rem; }
+    .theme-toggle {
+      position: relative;
+      top: 0;
+      left: 0;
+      text-align: left;
+      margin-bottom: 15px;
+    }
+    .theme-toggle button {
+      margin-left: auto;
+    }
   }
 </style>
 </head>
-<body>
+<body data-theme="dark">
 
 <div class="container">
+
+  <!-- زر تبديل الوضع (فاتح/داكن) -->
+  <div class="theme-toggle">
+    <button onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-text">الوضع الداكن</span>
+    </button>
+  </div>
 
   <!-- HEADER -->
   <header class="site-header">
@@ -578,144 +703,7 @@
     <div class="screen-desc">اختر المادة التي تريد الاختبار فيها لتبدأ رحلة التعلم</div>
 
     <div class="subjects-grid" id="subjects-grid">
-
-      <!-- 1. Heat Transfer - ACTIVE -->
-      <div class="subject-card" onclick="selectSubject('heat_transfer')">
-        <div class="subject-icon">🔥</div>
-        <div class="subject-info">
-          <div class="subject-name">الانتقال الحراري</div>
-          <div class="subject-en">Heat Transfer</div>
-        </div>
-        <div class="subject-badge">متاح</div>
-      </div>
-
-      <!-- 2-15: Coming Soon -->
-      <div class="subject-card disabled" onclick="showComing('انتقال الكتلة')">
-        <div class="subject-icon">💧</div>
-        <div class="subject-info">
-          <div class="subject-name">انتقال الكتلة</div>
-          <div class="subject-en">Mass Transfer</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('ميكانيك الموائع')">
-        <div class="subject-icon">🌊</div>
-        <div class="subject-info">
-          <div class="subject-name">ميكانيك الموائع</div>
-          <div class="subject-en">Fluid Mechanics</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('الثرموداينمك')">
-        <div class="subject-icon">⚡</div>
-        <div class="subject-info">
-          <div class="subject-name">الثرموداينمك</div>
-          <div class="subject-en">Thermodynamics</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('الحركية الكيميائية')">
-        <div class="subject-icon">⚗️</div>
-        <div class="subject-info">
-          <div class="subject-name">الحركية الكيميائية</div>
-          <div class="subject-en">Chemical Kinetics</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('المفاعلات الكيميائية')">
-        <div class="subject-icon">🧪</div>
-        <div class="subject-info">
-          <div class="subject-name">مفاعلات كيميائية</div>
-          <div class="subject-en">Chemical Reactors</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('الكيمياء العضوية')">
-        <div class="subject-icon">🧬</div>
-        <div class="subject-info">
-          <div class="subject-name">الكيمياء العضوية</div>
-          <div class="subject-en">Organic Chemistry</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('الكيمياء الفيزيائية')">
-        <div class="subject-icon">🔬</div>
-        <div class="subject-info">
-          <div class="subject-name">الكيمياء الفيزيائية</div>
-          <div class="subject-en">Physical Chemistry</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('الكيمياء التحليلية')">
-        <div class="subject-icon">📊</div>
-        <div class="subject-info">
-          <div class="subject-name">الكيمياء التحليلية</div>
-          <div class="subject-en">Analytical Chemistry</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('كيمياء النفط')">
-        <div class="subject-icon">🛢️</div>
-        <div class="subject-info">
-          <div class="subject-name">كيمياء النفط والبتروكيمياويات</div>
-          <div class="subject-en">Petroleum & Petrochemical Chemistry</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('عمليات الفصل')">
-        <div class="subject-icon">🔀</div>
-        <div class="subject-info">
-          <div class="subject-name">عمليات الفصل</div>
-          <div class="subject-en">Separation Processes</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('هندسة العمليات')">
-        <div class="subject-icon">🏭</div>
-        <div class="subject-info">
-          <div class="subject-name">هندسة العمليات الكيميائية</div>
-          <div class="subject-en">Chemical Process Engineering</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('السلامة الهندسية')">
-        <div class="subject-icon">🦺</div>
-        <div class="subject-info">
-          <div class="subject-name">السلامة والبيئة</div>
-          <div class="subject-en">Safety & Environmental Engineering</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('التآكل وحماية المواد')">
-        <div class="subject-icon">🔩</div>
-        <div class="subject-info">
-          <div class="subject-name">التآكل وحماية المواد</div>
-          <div class="subject-en">Corrosion & Materials Protection</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
-      <div class="subject-card disabled" onclick="showComing('السيطرة والتحكم')">
-        <div class="subject-icon">🎛️</div>
-        <div class="subject-info">
-          <div class="subject-name">السيطرة والتحكم بالعمليات</div>
-          <div class="subject-en">Process Control</div>
-        </div>
-        <div class="coming-badge">قريباً</div>
-      </div>
-
+      <!-- جميع المواد أصبحت متاحة الآن - سيتم تعبئتها بواسطة JavaScript -->
     </div>
   </div>
 
@@ -772,6 +760,14 @@
     <div class="options-list" id="options-list"></div>
 
     <div class="explanation-box" id="explanation-box"></div>
+    
+    <!-- زر بحث جوجل -->
+    <div class="google-search-container" id="google-search-container">
+      <button class="google-search-btn" onclick="searchOnGoogle()">
+        <span>🔍</span> بحث في Google
+      </button>
+    </div>
+    
     <button class="next-btn" id="next-btn" onclick="nextQuestion()">السؤال التالي ←</button>
   </div>
 
@@ -816,19 +812,133 @@
   </div>
 </div>
 
-<!-- DATA FILES -->
+<!-- DATA FILES (يرجى التأكد من وجود هذه الملفات في مجلد data) -->
 <script src="data/heat_transfer.js"></script>
+<script src="data/mass_transfer.js"></script>
+<script src="data/thermodynamics.js"></script>
+<script src="data/Chemical Kinetics.js"></script>
+<script src="data/Chemical Reactors.js"></script>
+<script src="data/Organic Chemistry.js"></script>
+<script src="data/Physical Chemistry.js"></script>
+<script src="data/Analytical Chemistry.js"></script>
+<script src="data/Petroleum Chemistry .js"></script>
+<script src="data/Separation Processes.js"></script>
+<script src="data/Process Engineering.js"></script>
+<script src="data/Safety & Environment.js"></script>
+<script src="data/Process Control.js"></script>
+<script src="data/Corrosion.js"></script>
 
 <script>
-// ====== SUBJECT DATA MAP ======
+// ====== تعريف جميع المواد مع أيقوناتها ======
 const SUBJECTS = {
   heat_transfer: {
     name: 'الانتقال الحراري',
     en: 'Heat Transfer',
     icon: '🔥',
     data: () => HEAT_TRANSFER_QUESTIONS
+  },
+  mass_transfer: {
+    name: 'انتقال الكتلة',
+    en: 'Mass Transfer',
+    icon: '💧',
+    data: () => MASS_TRANSFER_QUESTIONS
+  },
+  thermodynamics: {
+    name: 'الثرموداينمك',
+    en: 'Thermodynamics',
+    icon: '⚡',
+    data: () => THERMODYNAMICS_QUESTIONS
+  },
+  chemical_kinetics: {
+    name: 'الحركية الكيميائية',
+    en: 'Chemical Kinetics',
+    icon: '⚗️',
+    data: () => CHEMICAL_KINETICS_QUESTIONS
+  },
+  chemical_reactors: {
+    name: 'مفاعلات كيميائية',
+    en: 'Chemical Reactors',
+    icon: '🧪',
+    data: () => CHEMICAL_REACTORS_QUESTIONS
+  },
+  organic_chemistry: {
+    name: 'الكيمياء العضوية',
+    en: 'Organic Chemistry',
+    icon: '🧬',
+    data: () => ORGANIC_CHEMISTRY_QUESTIONS
+  },
+  physical_chemistry: {
+    name: 'الكيمياء الفيزيائية',
+    en: 'Physical Chemistry',
+    icon: '🔬',
+    data: () => PHYSICAL_CHEMISTRY_QUESTIONS
+  },
+  analytical_chemistry: {
+    name: 'الكيمياء التحليلية',
+    en: 'Analytical Chemistry',
+    icon: '📊',
+    data: () => ANALYTICAL_CHEMISTRY_QUESTIONS
+  },
+  petroleum_chemistry: {
+    name: 'كيمياء النفط والبتروكيمياويات',
+    en: 'Petroleum & Petrochemical Chemistry',
+    icon: '🛢️',
+    data: () => PETROLEUM_CHEMISTRY_QUESTIONS
+  },
+  separation_processes: {
+    name: 'عمليات الفصل',
+    en: 'Separation Processes',
+    icon: '🔀',
+    data: () => SEPARATION_PROCESSES_QUESTIONS
+  },
+  process_engineering: {
+    name: 'هندسة العمليات الكيميائية',
+    en: 'Chemical Process Engineering',
+    icon: '🏭',
+    data: () => PROCESS_ENGINEERING_QUESTIONS
+  },
+  safety_environment: {
+    name: 'السلامة والبيئة',
+    en: 'Safety & Environmental Engineering',
+    icon: '🦺',
+    data: () => SAFETY_ENVIRONMENT_QUESTIONS
+  },
+  corrosion: {
+    name: 'التآكل وحماية المواد',
+    en: 'Corrosion & Materials Protection',
+    icon: '🔩',
+    data: () => CORROSION_QUESTIONS
+  },
+  process_control: {
+    name: 'السيطرة والتحكم بالعمليات',
+    en: 'Process Control',
+    icon: '🎛️',
+    data: () => PROCESS_CONTROL_QUESTIONS
   }
 };
+
+// ====== إنشاء قائمة المواد ديناميكياً ======
+function renderSubjects() {
+  const grid = document.getElementById('subjects-grid');
+  grid.innerHTML = '';
+  
+  for (const [key, subject] of Object.entries(SUBJECTS)) {
+    const card = document.createElement('div');
+    card.className = 'subject-card';
+    card.onclick = () => selectSubject(key);
+    
+    card.innerHTML = `
+      <div class="subject-icon">${subject.icon}</div>
+      <div class="subject-info">
+        <div class="subject-name">${subject.name}</div>
+        <div class="subject-en">${subject.en}</div>
+      </div>
+      <div class="subject-badge">متاح</div>
+    `;
+    
+    grid.appendChild(card);
+  }
+}
 
 // ====== STATE ======
 let currentSubject = null;
@@ -839,6 +949,7 @@ let score          = 0;
 let correctCount   = 0;
 let wrongCount     = 0;
 let answered       = false;
+let currentQuestionText = '';
 
 // ====== HELPERS ======
 function showScreen(id) {
@@ -899,6 +1010,9 @@ function renderQuestion() {
   const letters = ['أ', 'ب', 'ج', 'د'];
   const levelName = { easy: 'سهل 🟢', medium: 'متوسط 🟡', hard: 'صعب 🔴' }[currentLevel];
 
+  // حفظ نص السؤال لاستخدامه في بحث جوجل
+  currentQuestionText = cur.q;
+
   // Progress
   document.getElementById('progress-fill').style.width = `${(currentIndex / total) * 100}%`;
   document.getElementById('quiz-info').textContent =
@@ -922,6 +1036,7 @@ function renderQuestion() {
   answered = false;
   document.getElementById('explanation-box').className = 'explanation-box';
   document.getElementById('explanation-box').textContent = '';
+  document.getElementById('google-search-container').className = 'google-search-container';
   document.getElementById('next-btn').className = 'next-btn';
   document.getElementById('next-btn').textContent =
     currentIndex === total - 1 ? 'عرض النتيجة 🏆' : 'السؤال التالي ←';
@@ -952,6 +1067,9 @@ function selectAnswer(idx) {
   exp.textContent = '💡 ' + cur.explanation;
   exp.className = 'explanation-box show';
 
+  // إظهار زر بحث جوجل
+  document.getElementById('google-search-container').className = 'google-search-container show';
+  
   document.getElementById('next-btn').className = 'next-btn show';
   document.getElementById('quiz-score').textContent = `النقاط: ${score}`;
 }
@@ -962,6 +1080,15 @@ function nextQuestion() {
     showResult();
   } else {
     renderQuestion();
+  }
+}
+
+// ====== بحث جوجل ======
+function searchOnGoogle() {
+  if (currentQuestionText) {
+    // تنظيف النص للبحث
+    const searchQuery = encodeURIComponent(currentQuestionText);
+    window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
   }
 }
 
@@ -1002,6 +1129,53 @@ function closeModal(e) {
     document.getElementById('modal-overlay').classList.remove('show');
   }
 }
+
+// ====== وظائف تبديل الوضع (فاتح/داكن) ======
+function toggleTheme() {
+  const html = document.documentElement;
+  const currentTheme = html.getAttribute('data-theme') || 'dark';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  
+  html.setAttribute('data-theme', newTheme);
+  
+  // تحديث نص وأيقونة الزر
+  const themeIcon = document.getElementById('theme-icon');
+  const themeText = document.getElementById('theme-text');
+  
+  if (newTheme === 'dark') {
+    themeIcon.textContent = '🌙';
+    themeText.textContent = 'الوضع الداكن';
+  } else {
+    themeIcon.textContent = '☀️';
+    themeText.textContent = 'الوضع الفاتح';
+  }
+  
+  // حفظ التفضيل في localStorage
+  localStorage.setItem('preferred-theme', newTheme);
+}
+
+// تحميل الوضع المحفوظ مسبقاً
+function loadSavedTheme() {
+  const savedTheme = localStorage.getItem('preferred-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  
+  const themeIcon = document.getElementById('theme-icon');
+  const themeText = document.getElementById('theme-text');
+  
+  if (savedTheme === 'dark') {
+    themeIcon.textContent = '🌙';
+    themeText.textContent = 'الوضع الداكن';
+  } else {
+    themeIcon.textContent = '☀️';
+    themeText.textContent = 'الوضع الفاتح';
+  }
+}
+
+// ====== تهيئة الصفحة ======
+window.onload = function() {
+  renderSubjects();
+  loadSavedTheme();
+};
 </script>
 
 </body>
